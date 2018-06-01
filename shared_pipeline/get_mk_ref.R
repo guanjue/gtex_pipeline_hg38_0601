@@ -9,8 +9,8 @@ parameters_files = read.table(parameters_file_list, header=F)
 FRiP_list = c()
 for (i in c(1:length(parameters_files))){
 	print(i)
-	print(parameters_files[i])
-	file=parameters_files[i]
+	print(parameters_files[i,1])
+	file=parameters_files[i,1]
 	parameters = read.table(file, header=F)
 	### FRiP score is in the 5th column
 	FRiP_list[i] = parameters[5]
