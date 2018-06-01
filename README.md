@@ -1,4 +1,4 @@
-# vision_pipeline_hg19_0526
+# gtex_pipeline_hg38_0601
 
 ## Dependence:
 #### Python/2.7
