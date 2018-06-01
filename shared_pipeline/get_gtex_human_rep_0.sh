@@ -36,7 +36,7 @@ while read LINE
 do
 	sig1=$ref0
 	sig2=$(echo "$LINE" | awk -F '.' -v OFS='\t' '{print $1"."$2"."$3"."$4".nbp_2r_bgadj.txt"}')
-	sig2_celltype=$(echo "$LINE" | awk -F '\t' -v OFS='\t' '{print $1}' | awk -F '_' -v OFS='\t' '{print $4}')
+	sig2_celltype=$(echo "$LINE" | awk -F '\t' -v OFS='\t' '{print $1}' | awk -F '.' -v OFS='\t' '{print $1}')
 	upperlim=500
 	lowerlim=0
 	echo $sig1 
@@ -49,10 +49,10 @@ do
 	time python $script_folder'peaknorm_rotate_log_ref_mean.py' -w 1 -p 1 -n 500000 -a 1 -b $sig1'.upperlim.txt' -c 1 -d $sig2'.upperlim.txt' -u $upperlim -l $lowerlim
 	### rm tmp files
 	rm $sig1'.upperlim.txt' $sig2'.upperlim.txt'
-	mv $sig2_celltype'_nbp_2r_bgadj.pknorm.txt' $sig2_celltype'.pknorm.ref.txt'
-	mv $sig2_celltype'_nbp_2r_bgadj.info.txt' $sig2_celltype'.info.ref.txt'
-	mv $sig2_celltype'_nbp_2r_bgadj.pknorm.scatterplot.png' $sig2_celltype'.pknorm.scatterplot.ref.png'
-	mv $sig2_celltype'_nbp_2r_bgadj.scatterplot.png' $sig2_celltype'.scatterplot.ref.png'
+	mv $sig2_celltype'.pknorm.txt' $sig2_celltype'.pknorm.ref.txt'
+	mv $sig2_celltype'.info.txt' $sig2_celltype'.info.ref.txt'
+	mv $sig2_celltype'.pknorm.scatterplot.png' $sig2_celltype'.pknorm.scatterplot.ref.png'
+	mv $sig2_celltype'.scatterplot.png' $sig2_celltype'.scatterplot.ref.png'
 done < all_ref_list.txt
 
 
