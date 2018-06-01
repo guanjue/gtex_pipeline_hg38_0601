@@ -7,10 +7,10 @@ output_name = args[2]
 parameters_files = read.table(parameters_file_list, header=F)
 
 FRiP_list = c()
-i = 0
-for (file in parameters_files){
-	i = i+1
+for (i in c(1:length(parameters_files))){
 	print(i)
+	print(parameters_files[i])
+	file=parameters_files[i]
 	parameters = read.table(file, header=F)
 	### FRiP score is in the 5th column
 	FRiP_list[i] = parameters[5]
