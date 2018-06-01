@@ -15,7 +15,6 @@ mark_ref_rep_id=$5
 cd $input_folder
 
 ###### (1) Reads-count --> (2) NB-p-value 
-#sleep 20000
 for ct in $(cat cell_list.txt)
 do
 	echo $ct
