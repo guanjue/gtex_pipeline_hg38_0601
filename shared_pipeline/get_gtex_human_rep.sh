@@ -22,10 +22,12 @@ do
 	for mk in $(cat mark_list.txt)
 	do
 		echo $mk
+		ls *$mk*$ct*.signal.tab > file_list_tmp.txt
 		###### 2_nbp
-		for r_id in $(cat replicate_list.txt)
+		for file in $(cat file_list_tmp.txt)
 		do
-			time Rscript $script_folder'negative_binomial_p_2r_bgadj.R' $mk'_'$ct'_'$r_id'.ip.bed' $mk'_'$ct'_'$r_id'.ct.bed' $mk'_'$ct'_'$r_id
+			echo $file
+			time Rscript $script_folder'negative_binomial_p_2r_bgadj_frip.R' $file $file
 		done
 	done
 done
