@@ -22,12 +22,12 @@ for mk in $(cat mark_list.txt)
 do
 	echo $mk
 	ls *$mk*.signal.tab.mvsp.txt > $mk'.file_list.txt'
-	time Rscript $script_folder'get_mk_ref.R $mk'.file_list.txt' $mk'.ref_frip.txt'
+	time Rscript $script_folder'get_mk_ref.R' $mk'.file_list.txt' $mk'.ref_frip.txt'
 done
 
 ###### get all reference list
 cat *.ref_frip.txt | sort -k2,2rn > all_ref_list.txt
-ref0=$(head -1 all_ref_list.txt)
+ref0=$(head -1 all_ref_list.txt | cut -f2)
 
 
 ######

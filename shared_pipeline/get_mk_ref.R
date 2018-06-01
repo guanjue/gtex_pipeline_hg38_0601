@@ -20,4 +20,4 @@ for (i in c(1:length(parameters_files))){
 ref_file = parameters_files[which.max(FRiP_list)]
 frip_ref = FRiP_list[which.max(FRiP_list)]
 
-write.table(c(output_name, frip_ref), output_name, sep='\t', quote=F, col.names=F, row.names=F)
+write.table(c(ref_file, frip_ref), output_name, sep='\t', quote=F, col.names=F, row.names=F)
