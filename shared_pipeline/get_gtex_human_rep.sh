@@ -87,6 +87,23 @@ done
 mkdir entex_data_output_2_16lim/
 mv *.pknorm.2_16lim.txt entex_data_output_2_16lim/
 
+mkdir pknorm_ref
+mv *.pknorm.ref.txt pknorm_ref/
+mv *.info.ref.txt pknorm_ref/
+mv *ref.png pknorm_ref/
+
+mkdir pknorm
+mv *png pknorm/
+mv *.pknorm.txt pknorm/
+mv *.info.txt pknorm/
+
+mkdir nbp_2r
+mv *.signal.tab.nbp_2r_bgadj.txt nbp_2r/
+mv *.signal.tab.mvsp.txt nbp_2r/
+
+mkdir reads_count
+mv *.bam.signal.tab reads_count/
+mv *.bam.tab reads_count/
 
 ###### write ideas input file
 ls entex_data_output_2_16lim/ > entex_pknorm_2_16lim_filelist.txt
@@ -108,12 +125,19 @@ do
 	echo $ct $mk $input_folder'entex_data_output_2_16lim/'$filename >> ideas.input
 done
 
+paste cell_list.txt cell_list.txt cell_list.txt | awk -F '\t' -v OFS='\t' '{print $1,$2,$3,"255,255,255"}' > cellinfo.txt
 
+mkdir entex_data_output_2_16lim_ideas
 
+###### run IDEAS
+time Rscript bin/runme.R ideas.input entex.parafile entex_data_output_2_16lim_ideas
 
-
-
-
-
-
+###bed
+#row_number: 15441243
+for file in $(cat file_list.txt)
+do
+	echo $file
+	head -15441243 $file > $file'.tmp'
+	mv $file'.tmp' $file
+done
 
