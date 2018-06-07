@@ -96,7 +96,8 @@ write.table(neglog10_nb_pval, paste(output_name, '.nbp_2r_bgadj.txt', sep=''), q
 #####################################################################################################################
 #####################################################################################################################
 FRiP = sum(neglog10_nb_pval[nb_pval<pk_thresh]) / sum(neglog10_nb_pval)
+SNR = mean((neglog10_nb_pval[nb_pval<pk_thresh]))/mean(neglog10_nb_pval)
 
-info_matrix = cbind(mean_vec, var_vec, size_vec, prob_vec, FRiP)
+info_matrix = cbind(mean_vec, var_vec, size_vec, prob_vec, SNR, FRiP)
 write.table(info_matrix, paste(output_name, '.mvsp.txt', sep=''), quote=FALSE, col.names=FALSE, row.names=FALSE, sep='\t')
 

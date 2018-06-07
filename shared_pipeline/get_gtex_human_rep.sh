@@ -28,16 +28,17 @@ done
 
 ###### get all reference list
 cat *.ref_frip.txt | sort -k2,2rn > all_ref_list.txt
-ref0=$(head -1 all_ref_list.txt | awk -F '.' -v OFS='\t' '{print $1"."$2"."$3"."$4".nbp_2r_bgadj.txt"}')
-
+#ref0=$(head -1 all_ref_list.txt | awk -F '.' -v OFS='\t' '{print $1"."$2"."$3"."$4".nbp_2r_bgadj.txt"}')
+ref0=$(head -1 all_ref_list.txt | awk -F '_' -v OFS='_' '{print $1,$2,$3,$4".fisher_p.txt"}')
 
 ###### (5) PKnorm normalization (between reference sample)
 while read LINE
 do
 	sig1=$ref0
-	sig2=$(echo "$LINE" | awk -F '.' -v OFS='\t' '{print $1"."$2"."$3"."$4".nbp_2r_bgadj.txt"}')
+	#sig2=$(echo "$LINE" | awk -F '.' -v OFS='\t' '{print $1"."$2"."$3"."$4".nbp_2r_bgadj.txt"}')
+	sig2=$(echo "$LINE" | awk -F '_' -v OFS='_' '{print $1,$2,$3,$4".fisher_p.txt"}')
 	sig2_celltype=$(echo "$LINE" | awk -F '\t' -v OFS='\t' '{print $1}' | awk -F '.' -v OFS='\t' '{print $1}')
-	upperlim=500
+	upperlim=1000
 	lowerlim=0
 	echo $sig1 
 	echo $sig2
