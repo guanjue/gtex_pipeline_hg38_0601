@@ -1,3 +1,4 @@
+input_folder=/storage/home/gzx103/scratch/gtex_encode/bams/
 ###### (1) Reads-count --> (2) NB-p-value 
 for ct in $(cat cell_list.txt)
 do
@@ -37,7 +38,7 @@ do
 	sig1=$ref0
 	#sig2=$(echo "$LINE" | awk -F '.' -v OFS='\t' '{print $1"."$2"."$3"."$4".nbp_2r_bgadj.txt"}')
 	sig2=$(echo "$LINE" | awk -F '_' -v OFS='_' '{print $1,$2,$3,$4".fisher_p.txt"}')
-	sig2_celltype=$(echo "$LINE" | awk -F '\t' -v OFS='\t' '{print $1}' | awk -F '.' -v OFS='\t' '{print $1}')
+	sig2_celltype=$(echo "$LINE" | awk -F '_' -v OFS='_' '{print $1,$2,$3,$4}')
 	upperlim=1000
 	lowerlim=0
 	echo $sig1 
@@ -55,21 +56,24 @@ do
 	mv $sig2_celltype'.pknorm.scatterplot.png' $sig2_celltype'.pknorm.scatterplot.ref.png'
 	mv $sig2_celltype'.scatterplot.png' $sig2_celltype'.scatterplot.ref.png'
 done < all_ref_list.txt
+ref0_celltype=$(echo "$ref0" | awk -F '.' -v OFS='\t' '{print $1}' | awk -F '_' -v OFS='_' '{print $1,$2,$3,$4}')
+cp $ref0 $ref0_celltype'.pknorm.ref.txt'
 
 
 ###### (6) PKnorm normalization (between reference & target sample)
 for mk in $(cat mark_list.txt)
 do
 	echo $mk
-	ref_mk=$(head -1 $mk'.ref_frip.txt' | awk -F '.' -v OFS='\t' '{print $1".pknorm.ref.txt"}')
+	ref_mk=$(head -1 $mk'.ref_frip.txt' | awk -F '_' -v OFS='_' '{print $1,$2,$3,$4".fisher_p.ref.txt"}')
+	cat $mk'.file_list.txt' | awk -F '_' -v OFS='_' '{print $1,$2,$3,$4}' > $mk'.file_list.ct.txt'
 	echo $ref_mk
 	ls $ref_mk
 	while read LINE
 	do
 		sig1=$ref_mk
-		sig2=$(echo "$LINE" | awk -F '.' -v OFS='\t' '{print $1".bam.signal.tab.nbp_2r_bgadj.txt"}')
+		sig2=$LINE'.fisher_p.txt'
 		sig2_celltype=$(echo "$LINE" | awk -F '.' -v OFS='\t' '{print $1}')
-		upperlim=500
+		upperlim=1000
 		lowerlim=0
 		echo $sig1 
 		echo $sig2
@@ -82,21 +86,30 @@ do
 		### rm tmp files
 		rm $sig1'.upperlim.txt' $sig2'.upperlim.txt'
 		cat $sig2_celltype'.pknorm.txt' | awk -F '\t' -v OFS='\t' '{if ($1>=16) print 16; else if ($1<=2) print 2; else print $1}' > $sig2_celltype'.pknorm.2_16lim.txt'
-	done < $mk'.file_list.txt'
+	done < $mk'.file_list.ct.txt'
 done
 
-mkdir entex_data_output_2_16lim/
-mv *.pknorm.2_16lim.txt entex_data_output_2_16lim/
+#mkdir entex_data_output_2_16lim/
+#mv *.pknorm.2_16lim.txt entex_data_output_2_16lim/
 
-mkdir pknorm_ref
-mv *.pknorm.ref.txt pknorm_ref/
-mv *.info.ref.txt pknorm_ref/
-mv *ref.png pknorm_ref/
+mkdir entex_data_output_2_16lim_fisherp/
+mv *.pknorm.2_16lim.txt entex_data_output_2_16lim_fisherp/
 
-mkdir pknorm
-mv *png pknorm/
-mv *.pknorm.txt pknorm/
-mv *.info.txt pknorm/
+mkdir entex_data_output_0_16lim_fisherp/
+mv *.pknorm.0_16lim.txt entex_data_output_0_16lim_fisherp/
+
+mkdir pknorm_ref_fisherp
+mv *.pknorm.ref.txt pknorm_ref_fisherp/
+mv *.info.ref.txt pknorm_ref_fisherp/
+mv *ref.png pknorm_ref_fisherp/
+
+mkdir pknorm_fisherp
+mv *png pknorm_fisherp/
+mv *.pknorm.txt pknorm_fisherp/
+mv *.info.txt pknorm_fisherp/
+
+mkdir fisher_p
+mv *.fisher_p.txt fisher_p/
 
 mkdir nbp_2r
 mv *.signal.tab.nbp_2r_bgadj.txt nbp_2r/
@@ -107,24 +120,68 @@ mv *.bam.signal.tab reads_count/
 mv *.bam.tab reads_count/
 
 ###### write ideas input file
-ls entex_data_output_2_16lim/ > entex_pknorm_2_16lim_filelist.txt
+ls entex_data_output_2_16lim_fisherp/ > entex_data_output_2_16lim_fisherp_filelist.txt
 ### remove previous ideas.input file
-if [ -f ideas.input ]
+if [ -f ideas.2_16lim_fisherp.input ]
 then
 	echo 'remove previous ideas.input'
-	rm ideas.input
+	rm ideas.2_16lim_fisherp.input
 fi
 ### get new ideas.input file
-for filename in $(cat entex_pknorm_2_16lim_filelist.txt)
+for filename in $(cat entex_data_output_2_16lim_fisherp_filelist.txt)
 do
 	echo $filename
 	mk=$(echo "$filename" | awk -F '_' '{print $2}' | awk -F '-' '{print $1}')
 	exp=$(echo "$filename" | awk -F '_' '{print $1}' | awk -F '-' '{print $1}')
 	if [ $exp = "DNase" ]; then mk=$(echo "$filename" | awk -F '_' '{print $1}' | awk -F '-' '{print $1}');fi
-	ct=$(echo "$filename" | awk -F '_' '{print $4}')
+	ct=$(echo "$filename" | awk -F '_' '{print $4}' | awk -F '.' '{print $1}' )
 	rep=$(echo "$filename" | awk -F '.' '{print $1}' | awk -F '_' '{print $3}')
-	echo $ct $mk $input_folder'entex_data_output_2_16lim/'$filename >> ideas.input
+	echo $ct $mk $input_folder'entex_data_output_2_16lim_fisherp/'$filename >> ideas.2_16lim_fisherp.input
 done
+
+
+###### write ideas input file
+ls entex_data_output_0_16lim_fisherp/ > entex_data_output_0_16lim_fisherp_filelist.txt
+### remove previous ideas.input file
+if [ -f ideas.0_16lim_fisherp.input ]
+then
+	echo 'remove previous ideas.input'
+	rm ideas.0_16lim_fisherp.input
+fi
+### get new ideas.input file
+for filename in $(cat entex_data_output_0_16lim_fisherp_filelist.txt)
+do
+	echo $filename
+	mk=$(echo "$filename" | awk -F '_' '{print $2}' | awk -F '-' '{print $1}')
+	exp=$(echo "$filename" | awk -F '_' '{print $1}' | awk -F '-' '{print $1}')
+	if [ $exp = "DNase" ]; then mk=$(echo "$filename" | awk -F '_' '{print $1}' | awk -F '-' '{print $1}');fi
+	ct=$(echo "$filename" | awk -F '_' '{print $4}' | awk -F '.' '{print $1}' )
+	rep=$(echo "$filename" | awk -F '.' '{print $1}' | awk -F '_' '{print $3}')
+	echo $ct $mk $input_folder'entex_data_output_0_16lim_fisherp/'$filename >> ideas.0_16lim_fisherp.input
+done
+
+
+###### write ideas input file
+ls pknorm_fisherp/*pknorm.txt > entex_data_output_0_1000_log2_fisherp_filelist.txt
+### remove previous ideas.input file
+if [ -f ideas.0_1000_log2_fisherp.input ]
+then
+	echo 'remove previous ideas.input'
+	rm ideas.0_1000_log2_fisherp.input
+fi
+### get new ideas.input file
+for filename in $(cat entex_data_output_0_1000_log2_fisherp_filelist.txt)
+do
+	echo $filename
+	mk=$(echo "$filename" | awk -F '_' '{print $2}' | awk -F '-' '{print $1}')
+	exp=$(echo "$filename" | awk -F '_' '{print $1}' | awk -F '-' '{print $1}')
+	if [ $exp = "DNase" ]; then mk=$(echo "$filename" | awk -F '_' '{print $1}' | awk -F '-' '{print $1}');fi
+	ct=$(echo "$filename" | awk -F '_' '{print $4}' | awk -F '.' '{print $1}' )
+	rep=$(echo "$filename" | awk -F '.' '{print $1}' | awk -F '_' '{print $3}')
+	echo $ct $mk $input_folder'pknorm_fisherp/'$filename >> ideas.0_1000_log2_fisherp.input
+done
+
+
 
 paste cell_list.txt cell_list.txt cell_list.txt | awk -F '\t' -v OFS='\t' '{print $1,$2,$3,"255,255,255"}' > cellinfo.txt
 

@@ -7,7 +7,7 @@ output_name = args[2]
 parameters_files = read.table(parameters_file_list, header=F)
 
 FRiP_list = c()
-for (i in c(1:length(parameters_files))){
+for (i in c(1:dim(parameters_files)[1])){
 	print(i)
 	print(parameters_files[i,1])
 	file=toString(parameters_files[i,1])
