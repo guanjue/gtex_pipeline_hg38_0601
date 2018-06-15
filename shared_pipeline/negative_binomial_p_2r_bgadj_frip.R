@@ -91,12 +91,12 @@ nb_pval[nb_pval<=1e-100] = 1e-100
 neglog10_nb_pval = -log10(nb_pval)
 
 ### write output
-write.table(neglog10_nb_pval, paste(output_name, '.nbp_2r_bgadj.txt', sep=''), quote=FALSE, col.names=FALSE, row.names=FALSE, sep='\t')
+#write.table(neglog10_nb_pval, paste(output_name, '.nbp_2r_bgadj.txt', sep=''), quote=FALSE, col.names=FALSE, row.names=FALSE, sep='\t')
 #####################################################################################################################
 #####################################################################################################################
 #####################################################################################################################
 FRiP = sum(neglog10_nb_pval[nb_pval<pk_thresh]) / sum(neglog10_nb_pval)
-SNR = mean((neglog10_nb_pval[nb_pval<pk_thresh]))/mean(neglog10_nb_pval[nb_pval>=pk_thresh])
+SNR = mean((neglog10_nb_pval[nb_pval<pk_thresh])+1)/mean(neglog10_nb_pval[nb_pval>=pk_thresh]+1)
 
 info_matrix = cbind(mean_vec, var_vec, size_vec, prob_vec, SNR, FRiP)
 write.table(info_matrix, paste(output_name, '.mvsp.txt', sep=''), quote=FALSE, col.names=FALSE, row.names=FALSE, sep='\t')
